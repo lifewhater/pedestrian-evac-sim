@@ -1,4 +1,5 @@
 import pygame
+from environment import DefaulRoom
 
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
@@ -6,14 +7,14 @@ clock = pygame.time.Clock()
 running = True
 
 center = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
-SCALE = 5
+SCALE = 2
 
 mathPoints = [
-    (-3, 0),
-    (-2, 2),
-    (2, 0),
-    (-2, -2),
-]
+        (-3, 0),
+        (-2, 2),
+        (2, 0),
+        (-2, -2),
+    ]
 
 arrow = [
     (center.x + x * SCALE, center.y + y * SCALE)
@@ -25,6 +26,8 @@ while running:
         if event.type == pygame.QUIT:
             running = False
     screen.fill((0, 0 ,0))
+    
+    DefaulRoom(screen, center)
 
     pygame.draw.polygon(screen, "thistle", arrow)
 
