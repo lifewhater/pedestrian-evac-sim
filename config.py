@@ -1,0 +1,4 @@
+SCALE = 4
+
+# ROOM DIMENSION
+
