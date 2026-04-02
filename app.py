@@ -9,7 +9,7 @@ running = True
 
 center = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
 room = DefaulRoom(screen, center)
-agents = [Agents(pygame.Vector2(center), room) for _ in range(10)]
+agents = [Agents(pygame.Vector2(center), room) for _ in range(100)]
 
 while running:
     for event in pygame.event.get():
