@@ -1,5 +1,7 @@
 ## Set up the virtual environment
 Make sure Python is installed and in the PATH
+Run command to create venv:
+`python -m venv .venv`
 ### Windows (activate venv)
 `.venv\Scripts\activate`
 ### Linux
