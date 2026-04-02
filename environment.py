@@ -5,9 +5,11 @@ def DefaulRoom(screen, center):
     roomWidth = 800
     exitWidth = 80
 
+    # top left corner of the room
     x = center.x - roomWidth // 2
     y = center.y - roomHeight // 2
 
+    # start of the exit 
     exitX = center.x - exitWidth // 2
 
     # 3 regular walls
@@ -21,3 +23,10 @@ def DefaulRoom(screen, center):
 
     #EXIT
     pygame.draw.line(screen, "red", (exitX, y), (exitX + exitWidth, y), 1)
+
+    return {
+        "height": roomHeight,
+        "width": roomWidth,
+        "x": x, "y": y,
+        "exitX": exitX, "exitWidth": exitWidth
+    }
