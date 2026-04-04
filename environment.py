@@ -1,14 +1,9 @@
 import pygame
 import numpy as np
-from config import HEIGHT, WIDTH
+from config import HEIGHT, WIDTH, CELL_SIZE
 
 def DefaulRoom(screen, center):
     exitWidth = 80
-    # Grid implementation for 
-    CELL_SIZE = 20
-    cols = WIDTH // CELL_SIZE
-    rows = HEIGHT // CELL_SIZE
-    grid = np.zeros((rows, cols), dtype=int)
 
     # top left corner of the room
     x = center.x - WIDTH // 2
@@ -28,9 +23,6 @@ def DefaulRoom(screen, center):
 
     #EXIT
     pygame.draw.line(screen, "red", (exitX, y), (exitX + exitWidth, y), 1)
-
-    for row in range(rows + 1):
-        pygame.draw.line(screen, "gray", (x, y + row * CELL_SIZE), (x + WIDTH, y + row * CELL_SIZE), 1)
 
     return {
         "height": HEIGHT,
