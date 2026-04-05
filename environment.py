@@ -32,14 +32,14 @@ def DefaulRoom(screen, center):
     for col in range(GRID_COLS + 1):
         pygame.draw.line(screen, "gray", (x + col * CELL_SIZE, y), (x + col * CELL_SIZE, y + HEIGHT), 1)
 
-    exit_cells = 
-    wall_cells = 
+    # exit_cells = 
+    # wall_cells = 
     return {
         "x": x, "y": y,
         "width": WIDTH, "height": HEIGHT,
         "exitX": exitX, "exitWidth": exitWidth,
         "grid_cols": grid_cols,
         "grid_rows": grid_rows,
-        "exit_cells": exit_cells,
-        "wall_cells": wall_cells,
+        # "exit_cells": exit_cells,
+        # "wall_cells": wall_cells,
     }
