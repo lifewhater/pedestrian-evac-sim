@@ -1,6 +1,8 @@
 import pygame
 from environment import DefaulRoom
 from agents import Agents
+from static_field import static_field
+from config import GRID_COLS, GRID_ROWS
 
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
