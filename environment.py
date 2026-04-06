@@ -1,12 +1,8 @@
 import pygame
-import numpy as np
 from config import HEIGHT, WIDTH, CELL_SIZE, GRID_COLS, GRID_ROWS
 
 def DefaulRoom(screen, center):
     exitWidth = 80
-
-    grid_cols = WIDTH // CELL_SIZE
-    grid_rows = HEIGHT // CELL_SIZE
 
     # top left corner of the room
     x = center.x - WIDTH // 2
@@ -38,8 +34,6 @@ def DefaulRoom(screen, center):
         "x": x, "y": y,
         "width": WIDTH, "height": HEIGHT,
         "exitX": exitX, "exitWidth": exitWidth,
-        "grid_cols": grid_cols,
-        "grid_rows": grid_rows,
         # "exit_cells": exit_cells,
         # "wall_cells": wall_cells,
     }
