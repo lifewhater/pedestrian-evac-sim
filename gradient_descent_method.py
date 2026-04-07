@@ -1,10 +1,9 @@
 import pygame
-import math
 from config import RADIUS, CELL_SIZE, GRID_COLS, GRID_ROWS
 import random
 
 class Agents:
-    def __init__(self, room, static_field, velocity = 3, mass = 80):
+    def __init__(self, room, static_field, velocity = 2, mass = 80):
         self.velocity = velocity
         self.room = room
         self.mass = mass
@@ -37,29 +36,18 @@ class Agents:
             self.reached_exit = True
             return
         
-        # Stochastic transition: only consider unoccupied neighbors closer to exit
-        neighbors = []
-        for dr, dc in [(-1,0),(1,0),(0,-1),(0,1),(-1,-1),(-1,1),(1,-1),(1,1)]:
-            nr, nc = row + dr, col + dc
+        # Gradient descent
+        best_val = self.static_field[row, col]
+        best_cell = None
+        for dr, dc in [(-1,0), (1,0), (0,1), (0,-1)]:
+            nc = dc + col
+            nr = dr + row
             if 0 <= nr < GRID_ROWS and 0 <= nc < GRID_COLS:
-                val = self.static_field[nr, nc]
-                if val < self.static_field[row, col] and (nr, nc) not in occupied:
-                    neighbors.append(((nr, nc), math.exp(-val)))
+                if self.static_field[nr, nc] < best_val and (nr, nc) not in occupied:
+                    best_val = self.static_field[nr, nc]
+                    best_cell = (nr, nc)
 
-        if neighbors:
-            total = sum(w for _, w in neighbors)
-            roll = random.uniform(0, total)
-            cumulative = 0
-            best_cell = neighbors[-1][0]  # fallback
-            for cell, w in neighbors:
-                cumulative += w
-                if roll <= cumulative:
-                    best_cell = cell
-                    break
-
-            occupied.discard((row, col))
-            occupied.add(best_cell)
-
+        if best_cell is not None:
             target = pygame.Vector2(
                 self.room["x"] + best_cell[1] * CELL_SIZE + CELL_SIZE / 2,
                 self.room["y"] + best_cell[0] * CELL_SIZE + CELL_SIZE / 2,
