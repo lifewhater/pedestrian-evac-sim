@@ -1,3 +1,5 @@
+# Possible change to Djikstra for implementing diagonal moves
+# for proper contour forming around the exit
 import numpy as np
 from collections import deque
 

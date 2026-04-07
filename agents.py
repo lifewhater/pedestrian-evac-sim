@@ -4,15 +4,21 @@ from config import RADIUS, CELL_SIZE, GRID_COLS, GRID_ROWS
 import random
 
 class Agents:
-    def __init__(self, room, static_field, velocity = 4, mass = 100):
+    def __init__(self, room, static_field,occupied, velocity = 3, mass = 100):
         self.velocity = velocity
         self.room = room
         self.mass = mass
         self.static_field = static_field
         self.reached_exit = False
-        self.position = pygame.Vector2(
-            random.randint(int(self.room["x"]) + RADIUS, int(self.room["x"] + self.room["width"]) - RADIUS),
-            random.randint(int(self.room["y"]) + RADIUS, int(self.room["y"] + self.room["height"]) - RADIUS))
+
+        GRID_ROWS, GRID_COLS = static_field.shape
+        while True:
+            row = random.randint(1, GRID_ROWS - 2)
+            col = random.randint(0, GRID_COLS - 1)
+            if (row, col) not in occupied:
+                self.cell = (row, col)
+                occupied.add((row, col))
+                break
 
     # Private method
     def _get_cell(self):
@@ -24,20 +30,22 @@ class Agents:
         return row, col
 
     def draw(self, screen):
-        pygame.draw.circle(screen, "thistle", self.position, RADIUS)
-    
-    def update(self, occupied, agent_positions):
+        row, col = self.cell
+        px = self.room["x"] + col * CELL_SIZE + CELL_SIZE // 2
+        py = self.room["y"] + row * CELL_SIZE + CELL_SIZE // 2
+        pygame.draw.circle(screen, "thistle", (px, py), RADIUS)
+    def update(self, occupied):
         if self.reached_exit:
             return
-        
-        row, col = self._get_cell()
+
+        row, col = self.cell
         GRID_ROWS, GRID_COLS = self.static_field.shape
 
         if self.static_field[row, col] == 0:
             self.reached_exit = True
+            occupied.discard((row, col))
             return
-        
-        # Stochastic transition: only consider unoccupied neighbors closer to exit
+
         neighbors = []
         for dr, dc in [(-1,0),(1,0),(0,-1),(0,1),(-1,-1),(-1,1),(1,-1),(1,1)]:
             nr, nc = row + dr, col + dc
@@ -50,28 +58,13 @@ class Agents:
             total = sum(w for _, w in neighbors)
             roll = random.uniform(0, total)
             cumulative = 0
-            best_cell = neighbors[-1][0]  # fallback
+            best_cell = neighbors[-1][0]
             for cell, w in neighbors:
                 cumulative += w
                 if roll <= cumulative:
                     best_cell = cell
                     break
 
-            target = pygame.Vector2(
-                self.room["x"] + best_cell[1] * CELL_SIZE + CELL_SIZE / 2,
-                self.room["y"] + best_cell[0] * CELL_SIZE + CELL_SIZE / 2,
-            )
-            # Block move if another agent is physically too close to the target
-            too_close = any(
-                pos is not self.position and target.distance_to(pos) < RADIUS * 2
-                for pos in agent_positions
-            )
-            if too_close:
-                return
             occupied.discard((row, col))
             occupied.add(best_cell)
-
-            direction = target - self.position
-            if direction.length() > 0:
-                direction = direction.normalize()
-            self.position += direction * self.velocity
+            self.cell = best_cell
