@@ -1,4 +1,4 @@
-import pygame
+import pygame, random
 from environment import DefaulRoom
 # from gradient_descent_method import Agents
 from agents import Agents
@@ -13,7 +13,10 @@ running = True
 center = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
 room = DefaulRoom(screen, center)
 field = static_field(GRID_COLS, GRID_ROWS, room["exit_cells"], room["wall_cells"])
+
+random.seed(42)
 agents = [Agents(room, field) for _ in range(100)]
+font = pygame.font.SysFont(None, 36)
 
 # Main pygame loop
 while running:
@@ -27,10 +30,13 @@ while running:
     # for agents to move 
     agents = [a for a in agents if not a.reached_exit]
     occupied = {agent._get_cell() for agent in agents}
+    agent_positions = [agent.position for agent in agents]
     for agent in agents:
-        agent.update(occupied)
+        agent.update(occupied, agent_positions)
         agent.draw(screen)
 
+    text = font.render(f"Remaning: {len(agents)}", True, "white")
+    screen.blit(text, (10, 10))
     pygame.display.flip()
 
     clock.tick(60)

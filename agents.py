@@ -4,7 +4,7 @@ from config import RADIUS, CELL_SIZE, GRID_COLS, GRID_ROWS
 import random
 
 class Agents:
-    def __init__(self, room, static_field, velocity = 3, mass = 80):
+    def __init__(self, room, static_field, velocity = 4, mass = 100):
         self.velocity = velocity
         self.room = room
         self.mass = mass
@@ -26,7 +26,7 @@ class Agents:
     def draw(self, screen):
         pygame.draw.circle(screen, "thistle", self.position, RADIUS)
     
-    def update(self, occupied):
+    def update(self, occupied, agent_positions):
         if self.reached_exit:
             return
         
@@ -57,13 +57,20 @@ class Agents:
                     best_cell = cell
                     break
 
-            occupied.discard((row, col))
-            occupied.add(best_cell)
-
             target = pygame.Vector2(
                 self.room["x"] + best_cell[1] * CELL_SIZE + CELL_SIZE / 2,
                 self.room["y"] + best_cell[0] * CELL_SIZE + CELL_SIZE / 2,
             )
+            # Block move if another agent is physically too close to the target
+            too_close = any(
+                pos is not self.position and target.distance_to(pos) < RADIUS * 2
+                for pos in agent_positions
+            )
+            if too_close:
+                return
+            occupied.discard((row, col))
+            occupied.add(best_cell)
+
             direction = target - self.position
             if direction.length() > 0:
                 direction = direction.normalize()
