@@ -27,3 +27,5 @@ def field(row, col, exit_cells, wall_cells):
 grid = field(row, col, exit_cells, wall_cells)
 
 print(grid)
+
+

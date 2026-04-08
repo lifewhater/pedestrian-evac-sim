@@ -1,13 +1,19 @@
-import seaborn as sns
 import matplotlib.pyplot as plt
 from src.static_field import static_field
+import numpy as np
+from config import GRID_ROWS, GRID_COLS, CELL_SIZE, WIDTH
 
-sns.set_theme(style="darkgrid")
-iris = sns.load_dataset(static_field)
+exit_width = 40
+exitX = (WIDTH - exit_width) // 2
+col_start = exitX // CELL_SIZE
+col_end = (exitX + exit_width) // CELL_SIZE
+exit_cells = set((0, col) for col in range(col_start, col_end + 1))
+wall_cells = set() 
 
-f, ax = plt.subplots(figsize = (8,8))
-ax.set_aspect("equal")
+field = static_field(GRID_ROWS, GRID_COLS, exit_cells, wall_cells)
+# field_display = np.where(np.isinf(field), np.nan, field)
 
-sns.kdeplot(
-    data=iris.query("agents != time"),
-)
+plt.figure(figsize=(10, 6))
+plt.imshow(field, cmap="Purples_r", origin="upper")
+plt.title("Static Floor Field")
+plt.show()
