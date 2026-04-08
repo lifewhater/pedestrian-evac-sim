@@ -1,8 +1,8 @@
 import pygame, random
-from environment import DefaultRoom
-# from gradient_descent_method import Agents
-from agents import Agents
-from static_field import static_field
+from src.environment import DefaultRoom
+# from src.gradient_descent_method import Agents
+from src.agents import Agents
+from src.static_field import static_field
 from config import GRID_COLS, GRID_ROWS, CELL_SIZE
 
 # --- Setup ---
@@ -17,7 +17,7 @@ room = DefaultRoom(screen, center)
 field = static_field(GRID_COLS, GRID_ROWS, room["exit_cells"], room["wall_cells"])
 
 # Spawn agents at unique cell centers so no two agents share a cell at start
-random.seed(42)
+random.seed(90)
 all_cells = [
     (r, c) for r in range(GRID_ROWS) for c in range(GRID_COLS)
     if (r, c) not in room["exit_cells"] and (r, c) not in room["wall_cells"]
@@ -28,7 +28,7 @@ agents = [
         room["x"] + c * CELL_SIZE + CELL_SIZE / 2,
         room["y"] + r * CELL_SIZE + CELL_SIZE / 2,
     ))
-    for r, c in all_cells[:200]
+    for r, c in all_cells[:400]
 ]
 font = pygame.font.SysFont(None, 36)
 
