@@ -1,8 +1,8 @@
 import pygame
 from config import HEIGHT, WIDTH, CELL_SIZE, GRID_COLS, GRID_ROWS
 
-def DefaulRoom(screen, center):
-    exitWidth = 40
+def DefaultRoom(screen, center):
+    exitWidth = 20
 
     # top left corner of the room
     x = center.x - WIDTH // 2
@@ -20,13 +20,13 @@ def DefaulRoom(screen, center):
     pygame.draw.line(screen, "white", (x, y), (exitX, y), 1)
     pygame.draw.line(screen, "white", (exitX + exitWidth, y), (x + WIDTH, y), 1)
 
-    #EXIT
-    pygame.draw.line(screen, "red", (exitX, y), (exitX + exitWidth, y), 1)
-
     for row in range(GRID_ROWS + 1):
         pygame.draw.line(screen, "gray", (x, y + row * CELL_SIZE), (x + WIDTH, y + row * CELL_SIZE), 1)
     for col in range(GRID_COLS + 1):
         pygame.draw.line(screen, "gray", (x + col * CELL_SIZE, y), (x + col * CELL_SIZE, y + HEIGHT), 1)
+
+    #EXIT
+    pygame.draw.line(screen, "red", (exitX, y), (exitX + exitWidth, y), 1)
 
     # Exit cells are at row=0, columns that fall within the exit opening
     col_start = int((exitX - x) / CELL_SIZE)

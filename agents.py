@@ -1,18 +1,17 @@
 import pygame
 import math
-from config import RADIUS, CELL_SIZE, GRID_COLS, GRID_ROWS
 import random
+from config import RADIUS, CELL_SIZE
+
 
 class Agents:
-    def __init__(self, room, static_field, velocity = 4, mass = 100):
+    def __init__(self, room, static_field, position, velocity = 4, mass = 100):
         self.velocity = velocity
         self.room = room
         self.mass = mass
         self.static_field = static_field
         self.reached_exit = False
-        self.position = pygame.Vector2(
-            random.randint(int(self.room["x"]) + RADIUS, int(self.room["x"] + self.room["width"]) - RADIUS),
-            random.randint(int(self.room["y"]) + RADIUS, int(self.room["y"] + self.room["height"]) - RADIUS))
+        self.position = pygame.Vector2(position)
 
     # Private method
     def _get_cell(self):
@@ -26,7 +25,7 @@ class Agents:
     def draw(self, screen):
         pygame.draw.circle(screen, "thistle", self.position, RADIUS)
     
-    def update(self, occupied, agent_positions):
+    def get_intention(self, occupied, wall_cells):
         if self.reached_exit:
             return
         
@@ -35,7 +34,7 @@ class Agents:
 
         if self.static_field[row, col] == 0:
             self.reached_exit = True
-            return
+            return None
         
         # Stochastic transition: only consider unoccupied neighbors closer to exit
         neighbors = []
@@ -44,34 +43,38 @@ class Agents:
             if 0 <= nr < GRID_ROWS and 0 <= nc < GRID_COLS:
                 val = self.static_field[nr, nc]
                 if val < self.static_field[row, col] and (nr, nc) not in occupied:
-                    neighbors.append(((nr, nc), math.exp(-val)))
+                    
+                    # Using Kirchner's method for determining conflicts and who occupies what cell
+                    # KD is urgernt factor
+                    KD = 20
+                    #  s_ij static field 
+                    # n_ij is 0 if occupied and 1 if not\
+                    # d_ij is 1 if not wall and 0 if wall
+                    s_ij = self.static_field[nr, nc] - self.static_field[row, col]
+                    n_ij = 1 if (nr, nc) in occupied else 0
+                    d_ij = 0 if (nr, nc) in wall_cells else 1
+                    p_ij = math.exp(KD * s_ij) * (1 - n_ij) * d_ij
+                    if p_ij > 0:
+                        neighbors.append(((nr, nc), p_ij))
 
-        if neighbors:
-            total = sum(w for _, w in neighbors)
-            roll = random.uniform(0, total)
-            cumulative = 0
-            best_cell = neighbors[-1][0]  # fallback
-            for cell, w in neighbors:
-                cumulative += w
-                if roll <= cumulative:
-                    best_cell = cell
-                    break
-
-            target = pygame.Vector2(
-                self.room["x"] + best_cell[1] * CELL_SIZE + CELL_SIZE / 2,
-                self.room["y"] + best_cell[0] * CELL_SIZE + CELL_SIZE / 2,
-            )
-            # Block move if another agent is physically too close to the target
-            too_close = any(
-                pos is not self.position and target.distance_to(pos) < RADIUS * 2
-                for pos in agent_positions
-            )
-            if too_close:
-                return
-            occupied.discard((row, col))
-            occupied.add(best_cell)
-
-            direction = target - self.position
-            if direction.length() > 0:
-                direction = direction.normalize()
-            self.position += direction * self.velocity
+        if not neighbors:
+            return None
+        total = sum(w for _, w in neighbors)
+        roll = random.uniform(0, total)
+        cumulative = 0
+        best_cell = neighbors[-1][0]  # fallback
+        for cell, w in neighbors:
+            cumulative += w
+            if roll <= cumulative:
+                best_cell = cell
+                break
+        return best_cell
+    
+    def move_to(self, cell):
+        target = pygame.Vector2(
+            self.room["x"] + cell[1] * CELL_SIZE + CELL_SIZE / 2,
+            self.room["y"] + cell[0] * CELL_SIZE + CELL_SIZE / 2,)
+        direction = target - self.position
+        if direction.length() > 0:
+            direction = direction.normalize()
+        self.position += direction * self.velocity
