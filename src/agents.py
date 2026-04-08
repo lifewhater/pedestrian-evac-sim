@@ -1,7 +1,7 @@
 import pygame
 import math
 import random
-from config import RADIUS, CELL_SIZE
+from config import RADIUS, CELL_SIZE, KD
 
 
 class Agents:
@@ -45,9 +45,7 @@ class Agents:
                 if val < self.static_field[row, col] and (nr, nc) not in occupied:
                     
                     # Using Kirchner's method for determining conflicts and who occupies what cell
-                    # KD is urgernt factor
-                    KD = 20
-                    #  s_ij static field 
+                    #  s_ij static field
                     # n_ij is 0 if occupied and 1 if not\
                     # d_ij is 1 if not wall and 0 if wall
                     s_ij = self.static_field[nr, nc] - self.static_field[row, col]
