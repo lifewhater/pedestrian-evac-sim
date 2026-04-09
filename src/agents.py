@@ -5,7 +5,7 @@ from config import RADIUS, CELL_SIZE, KD
 
 
 class Agents:
-    def __init__(self, room, static_field, position, velocity = 4, mass = 100):
+    def __init__(self, room, static_field, position, velocity = 20, mass = 100):
         self.velocity = velocity
         self.room = room
         self.mass = mass
