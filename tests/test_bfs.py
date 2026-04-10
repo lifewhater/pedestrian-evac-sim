@@ -5,7 +5,7 @@ row, col = 3, 3
 exit_cells = [(0, 1)]
 wall_cells = []
 
-def field(row, col, exit_cells, wall_cells):
+def static_field(row, col, exit_cells, wall_cells):
     static = np.full((row, col), np.inf)
     queue = deque()
 
@@ -24,7 +24,7 @@ def field(row, col, exit_cells, wall_cells):
 
     return static
 
-grid = field(row, col, exit_cells, wall_cells)
+grid = static_field(row, col, exit_cells, wall_cells)
 
 print(grid)
 

@@ -1,9 +1,11 @@
 import pygame, random
 from src.environment import DefaultRoom
-# from src.gradient_descent_method import Agents
+#from src.gradient_descent_method import Agents
+# from tests.test_bfs import static_field
 from src.agents import Agents
 from src.static_field import static_field
 from config import GRID_COLS, GRID_ROWS, CELL_SIZE
+from datavisual import agents_exit_plot
 
 # --- Setup ---
 pygame.init()
@@ -19,7 +21,7 @@ field = static_field(GRID_COLS, GRID_ROWS, room["exit_cells"], room["wall_cells"
 # Spawn agents at unique cell centers so no two agents share a cell at start
 random.seed(90)
 all_cells = [
-    (r, c) for r in range(GRID_ROWS) for c in range(GRID_COLS)
+    (r, c) for r in range(GRID_ROWS // 2, GRID_ROWS) for c in range(GRID_COLS)
     if (r, c) not in room["exit_cells"] and (r, c) not in room["wall_cells"]
 ]
 random.shuffle(all_cells)
@@ -31,6 +33,8 @@ agents = [
     for r, c in all_cells[:400]
 ]
 font = pygame.font.SysFont(None, 36)
+history = []
+step = 0
 
 # main loop
 while running:
@@ -60,6 +64,9 @@ while running:
         winner = random.choice(competing)
         winner.move_to(cell)
 
+    agents = [a for a in agents if not a.reached_exit]
+    history.append((step, 0 + len(agents)))
+    step += 1
     # Draw all remaining agents
     for agent in agents:
         agent.draw(screen)
@@ -72,3 +79,5 @@ while running:
 
 pygame.quit()
 
+if history:
+    agents_exit_plot(history)

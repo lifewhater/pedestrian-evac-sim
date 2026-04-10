@@ -25,3 +25,4 @@ def static_field(row, col, exit_cells, wall_cells):
                     heapq.heappush(heap, (new_cost, (nr, nc)))
 
     return static
+

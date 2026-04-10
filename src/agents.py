@@ -5,7 +5,7 @@ from config import RADIUS, CELL_SIZE, KD
 
 
 class Agents:
-    def __init__(self, room, static_field, position, velocity = 20, mass = 100):
+    def __init__(self, room, static_field, position, velocity = 1, mass = 100):
         self.velocity = velocity
         self.room = room
         self.mass = mass
@@ -46,12 +46,17 @@ class Agents:
                     
                     # Using Kirchner's method for determining conflicts and who occupies what cell
                     #  s_ij static field
-                    # n_ij is 0 if occupied and 1 if not\
+                    # n_ij is 0 if occupied and 1 if not
                     # d_ij is 1 if not wall and 0 if wall
-                    s_ij = self.static_field[nr, nc] - self.static_field[row, col]
-                    n_ij = 1 if (nr, nc) in occupied else 0
-                    d_ij = 0 if (nr, nc) in wall_cells else 1
-                    p_ij = math.exp(KD * s_ij) * (1 - n_ij) * d_ij
+                    static_ij = self.static_field[nr, nc] - self.static_field[row, col]
+
+
+                    dynamic_ij = 0
+                    occupied_ij = 1 if (nr, nc) in occupied else 0
+                    wall_ij = 0 if (nr, nc) in wall_cells else 1
+
+                    # NEED TO INCORPORATE DYNAMIC FIELD FOR CORRECT IMPLEMENTATION
+                    p_ij = math.exp(KD * static_ij) * (1 - occupied_ij) * wall_ij
                     if p_ij > 0:
                         neighbors.append(((nr, nc), p_ij))
 
