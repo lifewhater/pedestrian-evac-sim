@@ -1,3 +1,9 @@
+"""
+High level purpose, it represents a single agent in the simulation. It uses stochastic decision making 
+process based on a "Potential Field". It tells the agent which direction leads to exit but also considers obstacles and walls 
+and social pressure from the other agents.
+"""
+
 import pygame
 import math
 import random
@@ -13,7 +19,7 @@ class Agents:
         self.reached_exit = False
         self.position = pygame.Vector2(position)
 
-    # Private method
+    # Private method for getting the row and col 
     def _get_cell(self):
         col = int((self.position.x - self.room["x"]) / CELL_SIZE)
         row = int((self.position.y - self.room["y"]) / CELL_SIZE)
@@ -22,9 +28,11 @@ class Agents:
         row = max(0, min(row, GRID_ROWS - 1))
         return row, col
 
+    # Draws the agent
     def draw(self, screen):
         pygame.draw.circle(screen, "thistle", self.position, RADIUS)
     
+    #
     def get_intention(self, occupied, wall_cells):
         if self.reached_exit:
             return
