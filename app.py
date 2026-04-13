@@ -6,7 +6,7 @@ from src.environment import DefaultRoom
 from src.agents import Agents
 from src.static_field import static_field
 from src.dynamic_field import deposit_dynamic_field, update_dynamic_field
-from config import GRID_COLS, GRID_ROWS, CELL_SIZE
+from config import GRID_COLS, GRID_ROWS, CELL_SIZE, ALPHA, DELTA, KD, KS, NUM_AGENTS
 from datavisual import agents_exit_plot
 import matplotlib.pyplot as plt
 
@@ -34,7 +34,7 @@ agents = [
         room["x"] + c * CELL_SIZE + CELL_SIZE / 2,
         room["y"] + r * CELL_SIZE + CELL_SIZE / 2,
     ))
-    for r, c in all_cells[:400]
+    for r, c in all_cells[:NUM_AGENTS]
 ]
 font = pygame.font.SysFont(None, 36)
 history = []
@@ -88,6 +88,18 @@ while running:
 
     text = font.render(f"Remaining: {len(agents)}", True, "white")
     screen.blit(text, (10, 10))
+
+    param_lines = [
+        f"ALPHA = {ALPHA}",
+        f"DELTA = {DELTA}",
+        f"KD    = {KD}",
+        f"KS    = {KS}",
+        f"N     = {NUM_AGENTS}",
+    ]
+    small_font = pygame.font.SysFont("monospace", 20)
+    for i, line in enumerate(param_lines):
+        label = small_font.render(line, True, (200, 200, 200))
+        screen.blit(label, (10, 50 + i * 24))
     pygame.display.flip()
 
     clock.tick(0)

@@ -7,7 +7,7 @@ and social pressure from the other agents.
 import pygame
 import math
 import random
-from config import RADIUS, CELL_SIZE, KD
+from config import RADIUS, CELL_SIZE, KD, KS
 
 
 class Agents:
@@ -62,7 +62,7 @@ class Agents:
                     occupied_ij = 1 if (nr, nc) in occupied else 0
                     wall_ij = 0 if (nr, nc) in wall_cells else 1
 
-                    p_ij = math.exp(KD * static_ij + dynamic_ij) * (1 - occupied_ij) * wall_ij
+                    p_ij = math.exp(KS * static_ij + KD *dynamic_ij) * (1 - occupied_ij) * wall_ij
                     if p_ij > 0:
                         neighbors.append(((nr, nc), p_ij))
 

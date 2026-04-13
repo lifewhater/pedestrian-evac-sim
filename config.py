@@ -9,12 +9,15 @@ GRID_ROWS = HEIGHT // CELL_SIZE
 # Kirchner urgency factor — controls how strongly agents prefer the shortest path.
 # High KD (e.g. 20): agents funnel aggressively toward exit → strong bottleneck.
 # Low KD (e.g. 1-2): agents spread out more randomly → weaker bottleneck.
-KD = 2
+KD = 6
+KS = 8
 
 # Defined in the paper
 # Diffusion probability
 ALPHA = 0.3
 # Decay probabilty
 DELTA = 0.3
+
+NUM_AGENTS = 400
 
 
