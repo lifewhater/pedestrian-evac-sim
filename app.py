@@ -7,7 +7,6 @@ from src.agents import Agents
 from src.static_field import static_field
 from src.dynamic_field import deposit_dynamic_field, update_dynamic_field
 from config import GRID_COLS, GRID_ROWS, CELL_SIZE, ALPHA, DELTA, KD, KS, NUM_AGENTS
-from datavisual import agents_exit_plot
 import matplotlib.pyplot as plt
 
 # --- Setup ---
@@ -23,7 +22,7 @@ field = static_field(GRID_COLS, GRID_ROWS, room["exit_cells"], room["wall_cells"
 dynamic_field = np.zeros_like(field, dtype=float)
 
 # Spawn agents at unique cell centers so no two agents share a cell at start
-random.seed(90)
+random.seed()
 all_cells = [
     (r, c) for r in range(GRID_ROWS // 2, GRID_ROWS) for c in range(GRID_COLS)
     if (r, c) not in room["exit_cells"] and (r, c) not in room["wall_cells"]
@@ -105,6 +104,3 @@ while running:
     clock.tick(0)
 
 pygame.quit()
-
-if history:
-    agents_exit_plot(history)
