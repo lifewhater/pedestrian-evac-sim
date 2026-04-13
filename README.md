@@ -1,12 +1,12 @@
 # _Evacuation Simulation_
 A discrete agentic automation simulation of pedestrian evacuation dynamic implemented in Python using Pygame. It is based on the research paper published about floor field models introduced by Burstedde et al. (2001).
 
-Agents navigate a room toward a single exit using static floor field computed by Dijkstra's algorithm which assigns every cell a cose base on its distance to the exit. Agents choose their next cell stochastically using transition probability formula from the paper:
+Agents navigate a room toward a single exit using static floor field computed by Dijkstra's algorithm which assigns every cell a cost base on its distance to the exit. Agents choose their next cell stochastically using transition probability formula from the paper:
 
-`p_ij = N * exp(βJs * △s(i,j)) * (1 - n_ij) * d_ij`
+`p_ij = exp(KS * static_ij + KD * dynamic_ij) * (1 - occupied_ij) * wall_ij`
 
 
-Where △s(i,j) is the difference in static field between the neighbor and current cell, (1 - n_ij) blocks occupied cells, and d_ij blocks walls. Conflict resolution is handled by randomly selecting one winner when multiple agents compete for the same cell.
+Where `KS * static_ij` is the difference in static field between the neighbor and current cell, (1 - occupied_ij) blocks occupied cells, and wall_ij blocks walls. Conflict resolution is handled by randomly selecting one winner when multiple agents compete for the same cell.
 
 The simulation is designed to demonstrate the faster-is-slower effect the counterintuitive phenomenon where increasing agent urgency (via KD) leads to jamming near the exit and slower overall evacuation times.
 
@@ -29,4 +29,8 @@ Use requirements.txt to get the dependencies
 ## To change the experiment outcomes
 Go to `config.py`:
 - make changes to the room dimension
-- change the `KD` which in turn changes the urgency of each agent
+- change the `KD` and `KS` which in turn changes the urgency of each agent
+- `ALHPA` and `DELTA` changes the diffusion and decay. Meaning, it changes how fast the decay and diffusion happens.
+
+## To run the experiment:
+- `python app.py`
