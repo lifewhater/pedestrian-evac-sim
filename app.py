@@ -1,11 +1,14 @@
 import pygame, random
+import numpy as np
 from src.environment import DefaultRoom
 #from src.gradient_descent_method import Agents
 # from tests.test_bfs import static_field
 from src.agents import Agents
 from src.static_field import static_field
+from src.dynamic_field import deposit_dynamic_field, update_dynamic_field
 from config import GRID_COLS, GRID_ROWS, CELL_SIZE
 from datavisual import agents_exit_plot
+import matplotlib.pyplot as plt
 
 # --- Setup ---
 pygame.init()
@@ -17,6 +20,7 @@ running = True
 center = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
 room = DefaultRoom(screen, center)
 field = static_field(GRID_COLS, GRID_ROWS, room["exit_cells"], room["wall_cells"])
+dynamic_field = np.zeros_like(field, dtype=float)
 
 # Spawn agents at unique cell centers so no two agents share a cell at start
 random.seed(90)
@@ -26,7 +30,7 @@ all_cells = [
 ]
 random.shuffle(all_cells)
 agents = [
-    Agents(room, field, position=(
+    Agents(room, field, dynamic_field, position=(
         room["x"] + c * CELL_SIZE + CELL_SIZE / 2,
         room["y"] + r * CELL_SIZE + CELL_SIZE / 2,
     ))
@@ -35,6 +39,7 @@ agents = [
 font = pygame.font.SysFont(None, 36)
 history = []
 step = 0
+flow_data = []  # This should be populated with actual flow rate data during the simulation
 
 # main loop
 while running:
@@ -60,9 +65,19 @@ while running:
             intention.setdefault(cell, []).append(agent)
 
     # Resolve conflicts: if multiple agents want the same cell, pick one at random
+    moved_cells = []
     for cell, competing in intention.items():
         winner = random.choice(competing)
+        previous_cell = winner._get_cell()
         winner.move_to(cell)
+        moved_cells.append((previous_cell, cell))
+
+    for previous_cell, _ in moved_cells:
+        deposit_dynamic_field(dynamic_field, previous_cell)
+
+    dynamic_field = update_dynamic_field(dynamic_field)
+    for agent in agents:
+        agent.dynamic_field = dynamic_field
 
     agents = [a for a in agents if not a.reached_exit]
     history.append((step, 0 + len(agents)))
@@ -75,7 +90,7 @@ while running:
     screen.blit(text, (10, 10))
     pygame.display.flip()
 
-    clock.tick(60)
+    clock.tick(0)
 
 pygame.quit()
 

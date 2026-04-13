@@ -11,11 +11,12 @@ from config import RADIUS, CELL_SIZE, KD
 
 
 class Agents:
-    def __init__(self, room, static_field, position, velocity = 1, mass = 100):
+    def __init__(self, room, static_field, dynamic_field, position, velocity = 1, mass = 100):
         self.velocity = velocity
         self.room = room
         self.mass = mass
         self.static_field = static_field
+        self.dynamic_field = dynamic_field
         self.reached_exit = False
         self.position = pygame.Vector2(position)
 
@@ -40,9 +41,9 @@ class Agents:
         row, col = self._get_cell()
         GRID_ROWS, GRID_COLS = self.static_field.shape
 
-        if self.static_field[row, col] == 0:
-            self.reached_exit = True
-            return None
+        # If the agent is at the doorway, continue to a virtual cell outside.
+        if (row, col) in self.room["exit_cells"]:
+            return (-1, col)
         
         # Stochastic transition: only consider unoccupied neighbors closer to exit
         neighbors = []
@@ -57,14 +58,11 @@ class Agents:
                     # n_ij is 0 if occupied and 1 if not
                     # d_ij is 1 if not wall and 0 if wall
                     static_ij = self.static_field[nr, nc] - self.static_field[row, col]
-
-
-                    dynamic_ij = 0
+                    dynamic_ij = self.dynamic_field[nr, nc] - self.dynamic_field[row, col]
                     occupied_ij = 1 if (nr, nc) in occupied else 0
                     wall_ij = 0 if (nr, nc) in wall_cells else 1
 
-                    # NEED TO INCORPORATE DYNAMIC FIELD FOR CORRECT IMPLEMENTATION
-                    p_ij = math.exp(KD * static_ij) * (1 - occupied_ij) * wall_ij
+                    p_ij = math.exp(KD * static_ij + dynamic_ij) * (1 - occupied_ij) * wall_ij
                     if p_ij > 0:
                         neighbors.append(((nr, nc), p_ij))
 
@@ -82,10 +80,20 @@ class Agents:
         return best_cell
     
     def move_to(self, cell):
-        target = pygame.Vector2(
-            self.room["x"] + cell[1] * CELL_SIZE + CELL_SIZE / 2,
-            self.room["y"] + cell[0] * CELL_SIZE + CELL_SIZE / 2,)
+        if cell[0] < 0:
+            target = pygame.Vector2(
+                self.room["x"] + cell[1] * CELL_SIZE + CELL_SIZE / 2,
+                self.room["y"] - CELL_SIZE / 2,
+            )
+        else:
+            target = pygame.Vector2(
+                self.room["x"] + cell[1] * CELL_SIZE + CELL_SIZE / 2,
+                self.room["y"] + cell[0] * CELL_SIZE + CELL_SIZE / 2,
+            )
         direction = target - self.position
         if direction.length() > 0:
             direction = direction.normalize()
         self.position += direction * self.velocity
+
+        if self.position.y < self.room["y"]:
+            self.reached_exit = True

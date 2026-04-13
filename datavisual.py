@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from src.static_field import static_field
 from config import GRID_ROWS, GRID_COLS, CELL_SIZE, WIDTH
+import numpy as np
 
 exit_width = 40
 exitX = (WIDTH - exit_width) // 2
@@ -32,3 +33,4 @@ def agents_exit_plot(history, path="agents_v_time.png"):
     plt.tight_layout()
     plt.savefig(path)
     plt.close()
+
