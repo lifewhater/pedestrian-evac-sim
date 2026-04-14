@@ -1,7 +1,5 @@
 import numpy as np
-
 from config import ALPHA, DELTA
-
 
 def deposit_dynamic_field(dynamic_field, cell, amount=1.0):
     row, col = cell
