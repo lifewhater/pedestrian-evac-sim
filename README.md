@@ -6,7 +6,7 @@ Agents navigate a room toward a single exit using static floor field computed by
 `p_ij = exp(KS * static_ij + KD * dynamic_ij) * (1 - occupied_ij) * wall_ij`
 
 
-Where `KS * static_ij` is the difference in static field between the neighbor and current cell, (1 - occupied_ij) blocks occupied cells, and wall_ij blocks walls. Conflict resolution is handled by randomly selecting one winner when multiple agents compete for the same cell.
+Where `KS * static_ij` is the difference in static field between the neighbor and current cell, `KD * static_ij` is the dynamic field which is the pheromone left behind each agent, (1 - occupied_ij) blocks occupied cells, and wall_ij blocks walls. Conflict resolution is handled by randomly selecting one winner when multiple agents compete for the same cell.
 
 The simulation is designed to demonstrate the faster-is-slower effect the counterintuitive phenomenon where increasing agent urgency (via KD) leads to jamming near the exit and slower overall evacuation times.
 
