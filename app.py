@@ -1,4 +1,4 @@
-import pygame, random
+import pygame, random, os, cv2
 import numpy as np
 from src.environment import DefaultRoom
 #from src.gradient_descent_method import Agents
@@ -39,6 +39,9 @@ font = pygame.font.SysFont(None, 36)
 history = []
 step = 0
 flow_data = []  # This should be populated with actual flow rate data during the simulation
+os.makedirs("frames", exist_ok=True)
+fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+out = cv2.VideoWriter("evacuation.mp4", fourcc, 30, (screen.get_width(), screen.get_height()))
 
 # main loop
 while running:
@@ -104,3 +107,6 @@ while running:
     clock.tick(0)
 
 pygame.quit()
+
+out.release()
+print("Saved evacuation.mp4")
