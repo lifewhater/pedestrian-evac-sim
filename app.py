@@ -104,6 +104,11 @@ while running:
         screen.blit(label, (10, 50 + i * 24))
     pygame.display.flip()
 
+    frame = pygame.surfarray.array3d(screen)
+    frame = np.transpose(frame, (1, 0, 2))
+    frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+    out.write(frame)
+
     clock.tick(0)
 
 pygame.quit()
