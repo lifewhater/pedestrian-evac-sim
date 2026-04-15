@@ -20,7 +20,7 @@ from src.dynamic_field import deposit_dynamic_field, update_dynamic_field
 from config import GRID_COLS, GRID_ROWS, CELL_SIZE, ALPHA, DELTA, KD, KS, NUM_AGENTS
 
 # ── Configure here ────────────────────────────────────────────────────────────
-NUM_RUNS = 50
+NUM_RUNS = 30
 # ─────────────────────────────────────────────────────────────────────────────
 
 # Initialise pygame once (dummy driver → no window)
